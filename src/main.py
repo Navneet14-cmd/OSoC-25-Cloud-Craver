@@ -23,21 +23,22 @@ from rich.logging import RichHandler
 from rich.traceback import install
 
 # Install rich traceback handler for better error display
-install(show_locals=True)
+install(show_locals=True);
 
 # Initialize console for rich output
-console = Console()
+console = Console();
 
 # Application metadata
 APP_NAME = "cloudcraver"
 APP_VERSION = "1.0.0"
 APP_DESCRIPTION = "Cloud infrastructure template generator and validator with plugin system"
 
-# --- Import State Modules Path Dynamically ---
+# --- Import Custom Modules ---
 BASE_DIR = Path(__file__).resolve().parent
-STATE_DIR = BASE_DIR / "state"
-if STATE_DIR.exists() and str(STATE_DIR) not in sys.path:
-    sys.path.insert(0, str(BASE_DIR))
+for subdir in ["state", "cost", "terraform"]:
+    sub_path = BASE_DIR / subdir
+    if sub_path.exists() and str(BASE_DIR) not in sys.path:
+        sys.path.insert(0, str(BASE_DIR))
 
 
 def setup_logging(log_level: str = "INFO", log_file: Optional[str] = None):
@@ -610,6 +611,63 @@ def use_environment(env):
     from state.environments import use_environment
     use_environment(env)
 
+# --- COST COMMANDS ---
+@cli.group()
+def cost():
+    """Manage infrastructure cost estimation and reporting."""
+    pass
+
+@cost.command("estimate")
+@click.argument("provider", type=click.Choice(["aws", "azure", "gcp"]))
+@click.option("--tfplan", required=True, help="Terraform plan file")
+def estimate_cost(provider, tfplan):
+    if provider == "aws":
+        from cost.aws import estimate_aws_cost
+        estimate_aws_cost(tfplan)
+    elif provider == "azure":
+        from cost.azure import estimate_azure_cost
+        estimate_azure_cost(tfplan)
+    elif provider == "gcp":
+        from cost.gcp import estimate_gcp_cost
+        estimate_gcp_cost(tfplan)
+
+@cost.command()
+@click.option("--usage-pattern", required=True, help="Usage pattern JSON file")
+def optimize(usage_pattern):
+    from cost.optimizer import suggest_optimizations
+    suggest_optimizations(usage_pattern)
+
+@cost.command()
+@click.option("--tfplan", required=True, help="Terraform plan file")
+def compare(tfplan):
+    from cost.compare import compare_providers
+    compare_providers(tfplan)
+
+@cost.command()
+@click.option("--tfplan", required=True, help="Terraform plan file")
+def forecast(tfplan):
+    from cost.forecast import forecast_costs
+    forecast_costs(tfplan)
+
+@cost.command()
+@click.option("--output", required=True, help="Output file path for the report")
+def report(output):
+    from cost.report import generate_cost_report
+    generate_cost_report(output)
+
+# --- TERRAFORM COMMANDS ---
+@cli.group()
+def terraform():
+    """Run Terraform-related commands."""
+    pass
+
+@terraform.command("plan-generate")
+@click.option("--directory", default=".", help="Terraform configuration directory")
+@click.option("--out-file", default="plan.out", help="Output JSON file name")
+def generate_plan(directory, out_file):
+    from terraform.plan import generate_terraform_plan_json
+    generate_terraform_plan_json(directory, out_file)
+
 
 def main():
     """
@@ -657,3 +715,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+>>>>>>> upstream/main

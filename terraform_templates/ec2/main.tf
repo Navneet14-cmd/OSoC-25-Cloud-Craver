@@ -31,3 +31,4 @@ resource "aws_instance" "web" {
     Name = "ec2-instance"
   }
 }
+

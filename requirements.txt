@@ -61,15 +61,33 @@ aiohttp
 # JSON Processing Enhancements
 orjson
 
-pyhcl2
-pyyaml
+# SAML Authentication
+python3-saml
 
--r requirements.txt
+# JIRA Integration
+jira
+
+# OPA Integration
+opa-python-client
+
+# Dashboard
+streamlit
+pandas
+plotly
+
+# Ansible Integration
+ansible-runner
+
+# AWS Integration
+boto3
+
+# NetworkX
+networkx
 
 # Development dependencies
+pyhcl2
 pytest
 black
 flake8
 isort
 pre-commit
-

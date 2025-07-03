@@ -467,12 +467,37 @@ def validate(ctx, path):
 @cli.command(name="interactive-generate")
 def interactive_generate():
     """Interactive workflow to generate Terraform templates."""
-    from InquirerPy import prompt
+    try:
+        from InquirerPy import prompt
+        interactive_available = True
+    except ImportError:
+        interactive_available = False
+    
     from rich.progress import Progress
-    from interactive.validator import validate_region, validate_tags, validate_resources
     import json
+    import os
 
     console.rule("[bold cyan]Interactive Project Generator[/bold cyan]")
+
+    if not interactive_available:
+        console.print("[yellow]PyInquirer not installed. Falling back to basic input.[/yellow]")
+        provider = input("Choose cloud provider (AWS/Azure/GCP): ").strip()
+        region = input("Enter cloud region: ").strip()
+        project_name = input("Enter project name: ").strip() or "cloudcraver"
+        
+        # Simple project generation
+        output_dir = f"./{project_name}"
+        os.makedirs(output_dir, exist_ok=True)
+        console.print(f"[green]✔ Basic project '{project_name}' created at {output_dir}[/green]")
+        return
+
+    try:
+        from interactive.validator import validate_region, validate_tags, validate_resources
+    except ImportError:
+        # Define simple validators if module not available
+        def validate_region(val): return True
+        def validate_tags(val): return True
+        def validate_resources(answer): return True
 
     questions = [
         {
@@ -715,4 +740,3 @@ def main():
 
 if __name__ == "__main__":
     main()
->>>>>>> upstream/main

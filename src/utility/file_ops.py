@@ -20,8 +20,8 @@ def create_directory(path,mode=0o755):
         print(f"Directory '{path}' already exists.")
     except Exception as e:
         print(f" Error creating directory '{path}': {e}")
-def copy_file(src,dst)
-     """
+def copy_file(src,dst):
+    """
     Copies a file from src to dst.
 
     Arguments:
@@ -32,17 +32,17 @@ def copy_file(src,dst)
         FileNotFoundError: If the source file does not exist.
         PermissionError: If the copy fails due to permission issues.
     """
-     try:
-         shutil.copy2(src,dst)
-         print(f"copied file from '{src}'to '{dst}'")
-       except FileNotFoundError:
+    try:
+        shutil.copy2(src,dst)
+        print(f"copied file from '{src}'to '{dst}'")
+    except FileNotFoundError:
         print(f"Source file '{src}' not found.")
     except PermissionError:
         print(f"Permission denied while copying to '{dst}'.")
     except Exception as e:
         print(f"Error copying file: {e}")
 def render_template(template_path,output_path,context):
-      """
+    """
     Replaces placeholders in a template file with context values.
 
     Arguments:
@@ -50,8 +50,8 @@ def render_template(template_path,output_path,context):
         output_path (str): Where to write the rendered file.
         context (dict): A dictionary of placeholder-value pairs.
     """
-      try:
-                   with open(template_path, 'r') as f:
+    try:
+        with open(template_path, 'r') as f:
             content = f.read()
         for key, value in context.items():
             content = content.replace(f"{{{{ {key} }}}}", str(value))

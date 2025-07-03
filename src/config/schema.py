@@ -6,7 +6,7 @@ and provides type-safe access to configuration values.
 """
 
 from typing import List, Dict, Optional, Union, Literal
-from pydantic import BaseModel, Field, validator, root_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from pathlib import Path
 import os
 
@@ -58,14 +58,14 @@ class CloudConfig(BaseModel):
     azure: AzureConfig = Field(default_factory=AzureConfig)
     gcp: GCPConfig = Field(default_factory=GCPConfig)
     
-    @validator('providers')
+    @field_validator('providers')
     def validate_providers(cls, v):
         """Ensure at least one provider is specified."""
         if not v:
             raise ValueError("At least one cloud provider must be specified")
         return v
     
-    @root_validator
+    @model_validator(mode='before')
     def validate_default_provider_in_providers(cls, values):
         """Ensure default provider is in the providers list."""
         default_provider = values.get('default_provider')
@@ -158,7 +158,7 @@ class PathsConfig(BaseModel):
     cache_dir: str = Field(".cache")
     logs_dir: str = Field("logs")
     
-    @validator('templates_dir', 'output_dir', 'cache_dir', 'logs_dir')
+    @field_validator('templates_dir', 'output_dir', 'cache_dir', 'logs_dir')
     def validate_paths(cls, v):
         """Ensure paths are valid."""
         if not v:

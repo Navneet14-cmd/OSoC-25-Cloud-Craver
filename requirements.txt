@@ -60,3 +60,29 @@ aiohttp
 
 # JSON Processing Enhancements
 orjson
+
+# SAML Authentication
+python3-saml
+
+
+# JIRA Integration
+jira
+
+# OPA Integration
+opa-python-client
+
+# Dashboard
+streamlit
+pandas
+plotly
+
+# Ansible Integration
+ansible-runner
+
+# AWS Integration
+boto3
+
+
+
+# NetworkX
+networkx

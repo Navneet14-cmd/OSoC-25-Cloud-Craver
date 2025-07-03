@@ -1,0 +1,22 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+{% block content %}
+{% endblock %}
+
+{% macro common_tags(environment) %}
+tags = {
+  Environment = "{{ environment }}"
+  ManagedBy   = "CloudCraver"
+}
+{% endmacro %}

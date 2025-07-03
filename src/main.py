@@ -12,6 +12,8 @@ Main entry point for the Cloud Craver application that integrates:
 import asyncio
 import logging
 import sys
+import os
+import signal
 from pathlib import Path
 from typing import Optional
 
@@ -31,6 +33,12 @@ APP_NAME = "cloudcraver"
 APP_VERSION = "1.0.0"
 APP_DESCRIPTION = "Cloud infrastructure template generator and validator with plugin system"
 
+# --- Import State Modules Path Dynamically ---
+BASE_DIR = Path(__file__).resolve().parent
+STATE_DIR = BASE_DIR / "state"
+if STATE_DIR.exists() and str(STATE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
 
 def setup_logging(log_level: str = "INFO", log_file: Optional[str] = None):
     """
@@ -42,7 +50,7 @@ def setup_logging(log_level: str = "INFO", log_file: Optional[str] = None):
     """
     # Configure root logger
     logging.basicConfig(
-        level=getattr(logging, log_level.upper()),
+        level=getattr(logging, log_level.upper(), logging.INFO),
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[
             RichHandler(
@@ -425,6 +433,7 @@ def list_templates(ctx):
 def validate(ctx, path):
     """✅ Validate Terraform templates in the given directory."""
     import os
+    from terraform_validator.validator_dir.validate import validate_directory
     
     console.print(f"[cyan]Validating Terraform templates in: {path}[/cyan]")
     
@@ -445,8 +454,8 @@ def validate(ctx, path):
             console.print(f"  [dim]• {tf_file}[/dim]")
         
         # Basic validation (could be enhanced with actual terraform validation)
-        console.print(f"\n[green]✓ Basic validation completed[/green]")
-        console.print(f"[dim]Note: For full validation, run 'terraform validate' in the directory[/dim]")
+        result = validate_directory(path)
+        console.print(f"[green]Validation successful[/green]: {result}")
         
     except Exception as e:
         console.print(f"[red]Validation failed: {e}[/red]")
@@ -545,7 +554,61 @@ def interactive_generate():
     console.print(f"[green]✔ Project '{answers['project_name']}' for {answers['provider']} with {answers['resources']} created at {output_dir}[/green]")
 
 
+# --- STATE COMMANDS ---
+@cli.group()
+def state():
+    """Manage Terraform state."""
+    pass
 
+@state.command()
+@click.argument("provider", type=click.Choice(["s3", "azure", "gcs"]))
+@click.argument("bucket")
+@click.option("--region", help="Cloud region")
+def configure_backend(provider, bucket, region):
+    from state.backend import configure_remote_backend
+    configure_remote_backend(provider, bucket, region)
+
+@state.command()
+@click.argument("workspace")
+def create_workspace(workspace):
+    from state.workspace import create_workspace
+    create_workspace(workspace)
+
+@state.command()
+@click.argument("workspace")
+def switch_workspace(workspace):
+    from state.workspace import switch_workspace
+    switch_workspace(workspace)
+
+@state.command()
+@click.argument("workspace")
+def delete_workspace(workspace):
+    from state.workspace import delete_workspace
+    delete_workspace(workspace)
+
+@state.command()
+@click.argument("backend")
+def migrate(backend):
+    from state.migrate import migrate_state_backend
+    migrate_state_backend(backend)
+
+@state.command()
+@click.argument("path")
+def detect_drift(path):
+    from state.drift import detect_state_drift
+    detect_state_drift(path)
+
+@state.command()
+@click.argument("path")
+def cleanup(path):
+    from state.cleanup import cleanup_state_files
+    cleanup_state_files(path)
+
+@state.command()
+@click.argument("env")
+def use_environment(env):
+    from state.environments import use_environment
+    use_environment(env)
 
 
 def main():
@@ -557,7 +620,6 @@ def main():
     2. Initializes the CLI interface
     3. Handles global error cases
     """
-    import signal
     
     def signal_handler(signum, frame):
         """Handle shutdown signals gracefully."""

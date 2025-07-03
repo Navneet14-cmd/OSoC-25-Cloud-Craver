@@ -64,7 +64,6 @@ orjson
 # SAML Authentication
 python3-saml
 
-
 # JIRA Integration
 jira
 
@@ -82,7 +81,13 @@ ansible-runner
 # AWS Integration
 boto3
 
-
-
 # NetworkX
 networkx
+
+# Development dependencies
+pyhcl2
+pytest
+black
+flake8
+isort
+pre-commit

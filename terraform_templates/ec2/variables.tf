@@ -22,3 +22,15 @@ variable "subnet_id" {
   description = "Subnet ID where the instance will be launched"
   type        = string
 }
+
+variable "access_key" {
+  description = "AWS access key"
+  type        = string
+  sensitive   = true
+}
+
+variable "secret_key" {
+  description = "AWS secret key"
+  type        = string
+  sensitive   = true
+}

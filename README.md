@@ -1,5 +1,3 @@
-
-
 <div align="center">
 
 **Your One-Stop Shop for Cloud Infrastructure Management**
@@ -20,23 +18,23 @@ Whether you're deploying a simple VM or managing a complex multi-cloud environme
 
 ## ✨ Key Features
 
-*   **🤖 IaC Automation:**
-    Leverage the power of Terraform to automate your infrastructure provisioning. Cloud Craver provides a simplified interface to generate, validate, and apply Terraform configurations.
+- **🤖 IaC Automation:**
+  Leverage the power of Terraform to automate your infrastructure provisioning. Cloud Craver provides a simplified interface to generate, validate, and apply Terraform configurations.
 
-*   **💰 Cost Management & Optimization:**
-    Get a clear picture of your cloud spending. Estimate costs before deployment, get optimization suggestions based on usage patterns, compare costs across providers, and generate detailed reports.
+- **💰 Cost Management & Optimization:**
+  Get a clear picture of your cloud spending. Estimate costs before deployment, get optimization suggestions based on usage patterns, compare costs across providers, and generate detailed reports.
 
-*   **🛡️ Security & Compliance:**
-    Integrate security into your CI/CD pipeline. Scan your Terraform plans for vulnerabilities and enforce security policies to ensure your infrastructure is compliant with industry standards.
+- **🛡️ Security & Compliance:**
+  Integrate security into your CI/CD pipeline. Scan your Terraform plans for vulnerabilities and enforce security policies to ensure your infrastructure is compliant with industry standards.
 
-*   **🔌 Extensible Plugin System:**
-    Cloud Craver is built to be modular. Extend its core functionality with custom plugins to integrate with new services, create custom commands, or tailor it to your organization's specific needs.
+- **🔌 Extensible Plugin System:**
+  Cloud Craver is built to be modular. Extend its core functionality with custom plugins to integrate with new services, create custom commands, or tailor it to your organization's specific needs.
 
-*   **🌐 Multi-Cloud Support:**
-    Manage resources across AWS, Azure, and GCP through a single, consistent command-line interface.
+- **🌐 Multi-Cloud Support:**
+  Manage resources across AWS, Azure, and GCP through a single, consistent command-line interface.
 
-*   **📊 Interactive Dashboard:**
-    (Coming Soon) A web-based dashboard to visualize your cloud environment, track resource usage, and monitor costs in real-time.
+- **📊 Interactive Dashboard:**
+  (Coming Soon) A web-based dashboard to visualize your cloud environment, track resource usage, and monitor costs in real-time.
 
 ## 🚀 Getting Started
 
@@ -44,19 +42,21 @@ Whether you're deploying a simple VM or managing a complex multi-cloud environme
 
 Before you begin, ensure you have the following installed:
 
-*   **Python 3.8+**
-*   **Terraform**
-*   **Cloud Provider Credentials:** Configure your AWS, Azure, or GCP credentials on your local machine. Cloud Craver uses the standard SDKs (like `boto3` for AWS) which automatically detect these credentials.
+- **Python 3.8+**
+- **Terraform**
+- **Cloud Provider Credentials:** Configure your AWS, Azure, or GCP credentials on your local machine. Cloud Craver uses the standard SDKs (like `boto3` for AWS) which automatically detect these credentials.
 
 ### Installation
 
 1.  **Clone the repository:**
+
     ```bash
     git clone https://github.com/your-username/OSoC-25-Cloud-Craver.git
     cd OSoC-25-Cloud-Craver
     ```
 
 2.  **Create a virtual environment (recommended):**
+
     ```bash
     python3 -m venv venv
     source venv/bin/activate
@@ -72,9 +72,11 @@ Before you begin, ensure you have the following installed:
 Let's start by initializing the system and listing the available Terraform templates.
 
 1.  **Initialize Cloud Craver:**
+
     ```bash
     python cloudcraver.py init
     ```
+
     This command sets up the necessary configuration files and initializes the plugin system.
 
 2.  **List available templates:**
@@ -90,19 +92,22 @@ Let's start by initializing the system and listing the available Terraform templ
 This example shows how to generate a Terraform template for an AWS S3 bucket, and then validate it.
 
 1.  **Generate the template interactively:**
+
     ```bash
     python cloudcraver.py interactive-generate
     ```
+
     Follow the on-screen prompts to select the `aws-s3-bucket` template and specify an output directory.
 
 2.  **Navigate to the output directory:**
+
     ```bash
     cd generated-templates/aws-s3-bucket
     ```
 
 3.  **Validate the generated Terraform code:**
     ```bash
-    python ../../cloudcraver.py validate .
+    python cloudcraver.py validate .
     ```
     This will run `terraform init` and `terraform validate` on the generated code.
 
@@ -112,9 +117,11 @@ This example shows how to generate a Terraform plan and then estimate its cost.
 
 1.  **Generate a plan:**
     Assuming you are in a directory with Terraform files (`.tf`), run:
+
     ```bash
     python cloudcraver.py terraform plan-generate --directory . --out-file my-plan.json
     ```
+
     This will create a JSON representation of the Terraform plan.
 
 2.  **Estimate the cost:**
@@ -132,51 +139,61 @@ python cloudcraver.py [GROUP] [COMMAND] --help
 ```
 
 ### Core Commands
-*   `init`: Initialize Cloud Craver.
-*   `status`: Show the system status.
-*   `list-templates`: List available Terraform templates.
-*   `generate`: Generate a Terraform template by name.
-*   `validate <PATH>`: Validate a Terraform configuration.
-*   `interactive-generate`: Interactively generate a Terraform template.
+
+- `init`: Initialize Cloud Craver.
+- `status`: Show the system status.
+- `list-templates`: List available Terraform templates.
+- `generate`: Generate a Terraform template by name.
+- `validate <PATH>`: Validate a Terraform configuration.
+- `interactive-generate`: Interactively generate a Terraform template.
 
 ### `state`
+
 Manage Terraform state.
-*   `configure-backend`: Configure the Terraform backend (e.g., S3, Azure Blob).
-*   `create-workspace`: Create a new Terraform workspace.
-*   `switch-workspace`: Switch to a different workspace.
-*   ...and more for drift detection, migration, and cleanup.
+
+- `configure-backend`: Configure the Terraform backend (e.g., S3, Azure Blob).
+- `create-workspace`: Create a new Terraform workspace.
+- `switch-workspace`: Switch to a different workspace.
+- ...and more for drift detection, migration, and cleanup.
 
 ### `cost`
+
 Manage and analyze cloud costs.
-*   `estimate`: Estimate the cost of a Terraform plan.
-*   `optimize`: Suggest cost optimizations.
-*   `compare`: Compare costs across different cloud providers.
-*   `forecast`: Forecast future costs.
-*   `report`: Generate a cost report.
+
+- `estimate`: Estimate the cost of a Terraform plan.
+- `optimize`: Suggest cost optimizations.
+- `compare`: Compare costs across different cloud providers.
+- `forecast`: Forecast future costs.
+- `report`: Generate a cost report.
 
 ### `terraform`
+
 Wrapper for core Terraform commands.
-*   `plan-generate`: Generate a Terraform plan in JSON format.
+
+- `plan-generate`: Generate a Terraform plan in JSON format.
 
 ### Other Command Groups
-*   `audit`: Auditing commands.
-*   `auth`: Authentication and authorization management.
-*   `backup`: Backup management commands.
-*   `config`: Configuration management.
-*   `dashboard`: Launch the web dashboard.
-*   `integration`: Manage integrations (Jira, ServiceNow).
-*   `plugin`: Manage the plugin system.
-*   `policy`: Policy enforcement commands.
-*   `workflow`: Workflow automation commands.
+
+- `audit`: Auditing commands.
+- `auth`: Authentication and authorization management.
+- `backup`: Backup management commands.
+- `config`: Configuration management.
+- `dashboard`: Launch the web dashboard.
+- `integration`: Manage integrations (Jira, ServiceNow).
+- `plugin`: Manage the plugin system.
+- `policy`: Policy enforcement commands.
+- `workflow`: Workflow automation commands.
 
 ## 🔧 Configuration
 
 Cloud Craver can be configured via a `settings.toml` file located in the `src/config` directory. You can create a `local_settings.toml` to override the default settings without modifying the version-controlled files.
 
 Copy the example:
+
 ```bash
 cp src/config/local_settings.example.toml src/config/local_settings.toml
 ```
+
 Then, edit `src/config/local_settings.toml` to fit your needs.
 
 ## 🧩 Plugin System
@@ -198,5 +215,3 @@ Interested in contributing to Cloud Craver? Here’s how to get started.
 4.  **Make your changes.** Adhere to the existing code style and conventions.
 5.  **Add tests** for your new features or bug fixes.
 6.  **Submit a pull request.**
-
-

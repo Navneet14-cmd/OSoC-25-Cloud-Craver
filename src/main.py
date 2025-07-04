@@ -467,12 +467,9 @@ def validate(ctx, path):
 @cli.command(name="interactive-generate")
 def interactive_generate():
     """Interactive workflow to generate Terraform templates."""
-    try:
-        from InquirerPy import prompt
-        interactive_available = True
-    except ImportError:
-        interactive_available = False
-    
+    from questionary import prompt
+    interactive_available = sys.stdin.isatty() # Check if terminal is interactive
+
     from rich.progress import Progress
     import json
     import os
@@ -480,7 +477,7 @@ def interactive_generate():
     console.rule("[bold cyan]Interactive Project Generator[/bold cyan]")
 
     if not interactive_available:
-        console.print("[yellow]PyInquirer not installed. Falling back to basic input.[/yellow]")
+        console.print("[yellow]Interactive mode requires a TTY. Falling back to basic input.[/yellow]")
         provider = input("Choose cloud provider (AWS/Azure/GCP): ").strip()
         region = input("Enter cloud region: ").strip()
         project_name = input("Enter project name: ").strip() or "cloudcraver"
@@ -501,7 +498,7 @@ def interactive_generate():
 
     questions = [
         {
-            'type': 'list',
+            'type': 'select',
             'name': 'provider',
             'message': 'Choose cloud provider:',
             'choices': ['AWS', 'Azure', 'GCP']
@@ -510,7 +507,7 @@ def interactive_generate():
             'type': 'input',
             'name': 'region',
             'message': 'Enter cloud region:',
-            'validate': validate_region
+            'validate': lambda val: val != ""
         },
         {
             'type': 'checkbox',
@@ -522,7 +519,7 @@ def interactive_generate():
                 {'name': 'S3', 'value': 's3'},
                 {'name': 'RDS', 'value': 'rds'}
             ],
-            'validate': validate_resources
+            'validate': lambda answer: len(answer) > 0
         },
         {
             'type': 'input',
@@ -540,7 +537,7 @@ def interactive_generate():
             'type': 'input',
             'name': 'tags',
             'message': 'Enter comma-separated tags (key=value format):',
-            'validate': validate_tags
+            'validate': lambda val: True
         },
         {
             'type': 'input',
@@ -553,7 +550,7 @@ def interactive_generate():
             'message': 'Enter team name:'
         },
         {
-            'type': 'list',
+            'type': 'select',
             'name': 'environment',
             'message': 'Select environment:',
             'choices': ['development', 'staging', 'production']

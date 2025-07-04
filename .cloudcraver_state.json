@@ -1,15 +1,13 @@
 {
   "provider": "AWS",
-  "region": "us-east-1",
+  "region": "kdns",
   "resources": [
-    "vpc",
-    "ec2",
-    "s3"
+    "vpc"
   ],
   "project_name": "cloudcraver",
   "suffix": "",
-  "tags": "key=value,key2=value2\n",
+  "tags": "",
   "description": "",
   "team": "",
-  "environment": "development"
+  "environment": "staging"
 }

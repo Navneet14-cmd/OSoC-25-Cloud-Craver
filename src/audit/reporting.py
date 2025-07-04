@@ -7,7 +7,7 @@ import pandas as pd
 from rich.console import Console
 from rich.table import Table
 
-from audit.logger import AUDIT_LOG_FILE, AuditEvent
+from .logger import AUDIT_LOG_FILE, AuditEvent
 
 console = Console()
 

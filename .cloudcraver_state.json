@@ -1,13 +1,13 @@
 {
-  "provider": "AWS",
-  "region": "kdns",
+  "provider": "Azure",
+  "region": "region-2",
   "resources": [
     "vpc"
   ],
   "project_name": "cloudcraver",
   "suffix": "",
-  "tags": "",
-  "description": "",
-  "team": "",
+  "tags": "ll",
+  "description": "lll",
+  "team": "lop",
   "environment": "staging"
 }

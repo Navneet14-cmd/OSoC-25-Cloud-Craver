@@ -7,7 +7,7 @@ AWS CloudFormation templates for S3 buckets with various configurations.
 
 import json
 import logging
-from typing import Dict, List, Type, Any
+from typing import Dict, List, Type, Any, Optional
 
 from ..core import TemplatePlugin, PluginManifest, PluginMetadata, PluginType
 from ...templates.base import BaseTemplate, TemplateMetadata
@@ -27,8 +27,17 @@ class S3BucketTemplate(BaseTemplate):
     - Bucket policies
     """
     
-    def __init__(self, name: str, metadata: TemplateMetadata, variables: Dict[str, Any] = None):
-        super().__init__(name, metadata, variables)
+    def __init__(self, name: str, metadata: TemplateMetadata, template_name: str, base_template_root_dir: str, variables: Optional[Dict[str, Any]] = None):
+        # Initialize basic attributes without calling parent's __init__ to avoid template loading
+        self.name = name
+        self.metadata = metadata
+        self.template_name = template_name
+        self._variables: Dict[str, Any] = variables if variables is not None else {}
+        self._output: Optional[str] = None
+        
+        # We don't need Jinja2 environment since we generate CloudFormation JSON programmatically
+        # Set template to None since we override generate() method
+        self.template = None
         
         # Set default variables for S3 bucket
         self._variables.setdefault('bucket_name', f'{name}-bucket')
@@ -37,6 +46,15 @@ class S3BucketTemplate(BaseTemplate):
         self._variables.setdefault('public_access_blocked', True)
         self._variables.setdefault('deletion_protection', False)
     
+    def generate_context(self) -> Dict[str, Any]:
+        """
+        Generates the context dictionary for Jinja2 rendering.
+        """
+        return {
+            "bucket_name": self._variables.get("bucket_name", f"{self.name}-s3-bucket"),
+            "environment": self._variables.get("environment", "development"),
+        }
+
     def generate(self) -> str:
         """
         Generate CloudFormation template for S3 bucket.
@@ -204,7 +222,7 @@ class S3BucketTemplate(BaseTemplate):
         if not self._output:
             self.generate()
         
-        return self._output
+        return self._output or ""
 
 
 class AWSS3TemplatePlugin(TemplatePlugin):
@@ -218,7 +236,7 @@ class AWSS3TemplatePlugin(TemplatePlugin):
     4. Handle plugin lifecycle events
     """
     
-    def __init__(self, manifest: PluginManifest, config: Dict[str, Any] = None):
+    def __init__(self, manifest: PluginManifest, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the AWS S3 template plugin.
         
@@ -351,7 +369,7 @@ class AWSS3TemplatePlugin(TemplatePlugin):
             **kwargs
         }
         
-        return S3BucketTemplate(name, metadata, variables)
+        return S3BucketTemplate(name, metadata, "dummy.j2", "/", variables)
     
     async def _on_template_create(self, template_name: str, template_type: str):
         """Hook called when a template is created."""
@@ -389,4 +407,4 @@ PLUGIN_MANIFEST = PluginManifest(
     hooks=["template_create", "template_validate"],
     provides=["s3_template"],
     permissions=["file_read", "temp_write"]
-) 
+)

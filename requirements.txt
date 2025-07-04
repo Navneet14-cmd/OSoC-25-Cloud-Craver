@@ -5,7 +5,6 @@ click
 rich
 
 # Interactive Prompts and Menus
-PyInquirer
 
 # Configuration Management
 dynaconf
@@ -90,4 +89,4 @@ pytest
 black
 flake8
 isort
-pre-commit
+questionary

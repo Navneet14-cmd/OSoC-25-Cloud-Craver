@@ -1,0 +1,8 @@
+include README.md
+include requirements.txt
+recursive-include terraform_templates *
+recursive-include src *
+recursive-include src/templates *
+recursive-include src/config *
+recursive-include src/data *
+recursive-include src/plugins *

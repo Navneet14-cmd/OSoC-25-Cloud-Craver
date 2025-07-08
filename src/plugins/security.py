@@ -18,6 +18,12 @@ from typing import Dict, List, Set, Any, Optional, Callable
 import tempfile
 import resource
 
+# ──────────────── Platform-Specific Safe Import ──────────────── #
+if sys.platform != "win32":
+    import resource
+else:
+    resource = None    # fallback for unavailable module
+
 logger = logging.getLogger(__name__)
 
 
@@ -370,34 +376,41 @@ class PluginSandbox:
     
     def _set_resource_limits(self):
         """Set resource limits for plugin execution."""
+        if not resource:
+            logger.warning("Resource limits not enforced: 'resource' module not available on this OS.")
+            return
         try:
             # Set CPU time limit (SIGXCPU will be sent when exceeded)
             if hasattr(resource, 'RLIMIT_CPU'):
                 resource.setrlimit(resource.RLIMIT_CPU, (self.max_cpu_time, self.max_cpu_time))
-            
+
             # Set memory limit
             if hasattr(resource, 'RLIMIT_AS'):
                 resource.setrlimit(resource.RLIMIT_AS, (self.max_memory, self.max_memory))
-            
+
             logger.debug("Resource limits set successfully")
-            
+
         except Exception as e:
             logger.warning(f"Failed to set resource limits: {e}")
+
     
     def _reset_resource_limits(self):
         """Reset resource limits to system defaults."""
+        if not resource:
+            return
         try:
             # Reset to unlimited (or system max)
             unlimited = resource.RLIM_INFINITY
-            
+
             if hasattr(resource, 'RLIMIT_CPU'):
                 resource.setrlimit(resource.RLIMIT_CPU, (unlimited, unlimited))
-            
+
             if hasattr(resource, 'RLIMIT_AS'):
                 resource.setrlimit(resource.RLIMIT_AS, (unlimited, unlimited))
-            
+
         except Exception as e:
             logger.warning(f"Failed to reset resource limits: {e}")
+
     
     def get_permissions_for_plugin_type(self, plugin_type: str) -> List[str]:
         """

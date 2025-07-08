@@ -17,7 +17,7 @@ sys.path.insert(0, str(src_dir))
 # Now we can import and run the main application
 if __name__ == "__main__":
     try:
-        from main import main
+        from src.main import main
         main()
     except ImportError as e:
         print(f"Error importing main module: {e}")
